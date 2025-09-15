@@ -1,0 +1,46 @@
+{
+  "mcp_server": {
+    "name": "cursor-background-agent-mcp",
+    "version": "1.0.0",
+    "description": "MCP server for Cursor Background Agent API integration",
+    "type": "integration",
+    "domain": "autonomous-coding"
+  },
+  "cursor_api": {
+    "base_url": "https://api.cursor.com",
+    "timeout": 30,
+    "max_retries": 3,
+    "rate_limit": {
+      "requests_per_minute": 60,
+      "burst_size": 10
+    }
+  },
+  "features": {
+    "auto_retry": true,
+    "progress_monitoring": true,
+    "local_agent_cache": true,
+    "detailed_logging": true
+  },
+  "security": {
+    "require_api_key": true,
+    "validate_repository_access": true,
+    "log_api_calls": false
+  },
+  "agent_defaults": {
+    "model": "claude-3-5-sonnet",
+    "max_iterations": 10,
+    "branch": "main",
+    "timeout_minutes": 30
+  },
+  "mcp_capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true,
+    "sampling": false
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "cursor_mcp_server.log"
+  }
+}

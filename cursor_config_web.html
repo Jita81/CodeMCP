@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Background Agent Configuration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .model-info {
+            background: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #1a365d;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1b0b7;
+        }
+
+        .config-preview {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .feature-card p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Cursor Agent Config</h1>
+            <p>Configure your repository and AI model for autonomous coding</p>
+        </div>
+
+        <form id="configForm">
+            <div class="form-group">
+                <label for="repository_url">📂 Repository URL</label>
+                <input 
+                    type="url" 
+                    id="repository_url" 
+                    name="repository_url" 
+                    placeholder="https://github.com/username/repository"
+                    required
+                >
+                <div class="help-text">Enter the GitHub repository URL you want the agent to work on</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="model">🧠 AI Model</label>
+                    <select id="model" name="model" required>
+                        <option value="claude-3-5-sonnet" selected>Claude 3.5 Sonnet (Recommended)</option>
+                        <option value="claude-3-haiku">Claude 3 Haiku (Fast & Cheap)</option>
+                        <option value="gpt-4o">GPT-4o (Most Capable)</option>
+                    </select>
+                    <div class="model-info" id="modelInfo">
+                        <strong>Claude 3.5 Sonnet:</strong> Best overall performance with good balance of speed, cost, and capability. Recommended for most tasks.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="branch">🌿 Target Branch</label>
+                    <input 
+                        type="text" 
+                        id="branch" 
+                        name="branch" 
+                        placeholder="main"
+                        value="main"
+                    >
+                    <div class="help-text">Branch where the agent will make changes (e.g., feature/new-feature)</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="max_iterations">🔄 Max Iterations</label>
+                    <input 
+                        type="number" 
+                        id="max_iterations" 
+                        name="max_iterations" 
+                        min="1" 
+                        max="50" 
+                        value="15"
+                    >
+                    <div class="help-text">How thorough the agent should be (1-50)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="task_type">🎯 Task Type</label>
+                    <select id="task_type" name="task_type">
+                        <option value="feature">Feature Development</option>
+                        <option value="bugfix">Bug Fix</option>
+                        <option value="refactor">Code Refactoring</option>
+                        <option value="test">Add Tests</option>
+                        <option value="docs">Documentation</option>
+                        <option value="performance">Performance Optimization</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="prompt">📝 Task Description</label>
+                <textarea 
+                    id="prompt" 
+                    name="prompt" 
+                    placeholder="Describe what you want the AI agent to do..."
+                    required
+                ></textarea>
+                <div class="help-text">Be specific about requirements, acceptance criteria, and any constraints</div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="previewConfig()">
+                    👁️ Preview Config
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    🚀 Create Agent
+                </button>
+            </div>
+        </form>
+
+        <div id="status" class="status"></div>
+        <div id="configPreview" class="config-preview" style="display: none;"></div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>🤖 Autonomous Coding</h3>
+                <p>AI agents work independently on your repositories</p>
+            </div>
+            <div class="feature-card">
+                <h3>📊 Real-time Monitoring</h3>
+                <p>Track progress and see files being modified</p>
+            </div>
+            <div class="feature-card">
+                <h3>🔄 Follow-up Instructions</h3>
+                <p>Send additional guidance during execution</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Model information data
+        const modelInfo = {
+            'claude-3-5-sonnet': {
+                name: 'Claude 3.5 Sonnet',
+                description: 'Best overall performance with good balance of speed, cost, and capability. Recommended for most tasks.',
+                speed: 'Fast',
+                cost: 'Moderate',
+                capability: 'High'
+            },
+            'claude-3-haiku': {
+                name: 'Claude 3 Haiku',
+                description: 'Fastest and most cost-effective option. Great for simple fixes and straightforward tasks.',
+                speed: 'Very Fast',
+                cost: 'Low',
+                capability: 'Good'
+            },
+            'gpt-4o': {
+                name: 'GPT-4o',
+                description: 'Most capable model for complex reasoning and architectural decisions. Higher cost but highest quality.',
+                speed: 'Moderate',
+                cost: 'High',
+                capability: 'Highest'
+            }
+        };
+
+        // Task type prompts
+        const taskPrompts = {
+            feature: "Implement a new feature:\n\n- Add [specific functionality]\n- Ensure proper error handling\n- Include unit tests\n- Follow existing code patterns\n- Update documentation",
+            bugfix: "Fix the following bug:\n\nProblem: [describe the issue]\nLocation: [file/component name]\n\nSteps to fix:\n1. Investigate root cause\n2. Implement solution\n3. Add regression test\n4. Verify fix works",
+            refactor: "Refactor the codebase:\n\n- Improve [specific component/module]\n- Maintain existing functionality\n- Add proper error handling\n- Improve code organization\n- Update tests and documentation",
+            test: "Add comprehensive tests:\n\n- Increase test coverage for [component]\n- Add unit tests for all functions\n- Include integration tests\n- Test edge cases and error scenarios\n- Ensure all tests pass",
+            docs: "Update documentation:\n\n- Document [feature/API/component]\n- Add code examples\n- Update README if needed\n- Include usage guidelines\n- Ensure accuracy and clarity",
+            performance: "Optimize performance:\n\n- Analyze [specific area] for bottlenecks\n- Implement optimizations\n- Measure before/after metrics\n- Ensure no functionality regression\n- Document improvements"
+        };
+
+        // Update model info when selection changes
+        document.getElementById('model').addEventListener('change', function() {
+            const selectedModel = this.value;
+            const info = modelInfo[selectedModel];
+            const infoDiv = document.getElementById('modelInfo');
+            
+            infoDiv.innerHTML = `
+                <strong>${info.name}:</strong> ${info.description}<br>
+                <em>Speed: ${info.speed} | Cost: ${info.cost} | Capability: ${info.capability}</em>
+            `;
+        });
+
+        // Update prompt template when task type changes
+        document.getElementById('task_type').addEventListener('change', function() {
+            const selectedType = this.value;
+            const promptField = document.getElementById('prompt');
+            
+            if (!promptField.value.trim()) {
+                promptField.value = taskPrompts[selectedType];
+            }
+        });
+
+        // Set initial prompt
+        document.getElementById('prompt').value = taskPrompts.feature;
+
+        function previewConfig() {
+            const formData = new FormData(document.getElementById('configForm'));
+            const config = Object.fromEntries(formData.entries());
+            
+            const configJson = {
+                repository_url: config.repository_url,
+                prompt: config.prompt,
+                branch: config.branch,
+                model: config.model,
+                max_iterations: parseInt(config.max_iterations),
+                task_type: config.task_type,
+                timestamp: new Date().toISOString()
+            };
+
+            const preview = document.getElementById('configPreview');
+            preview.style.display = 'block';
+            preview.innerHTML = `
+                <strong>Generated Configuration:</strong><br><br>
+                <pre>${JSON.stringify(configJson, null, 2)}</pre>
+                <br>
+                <strong>MCP Tool Call:</strong><br><br>
+                <pre>cursor_create_background_agent(${JSON.stringify(configJson, null, 2)})</pre>
+            `;
+
+            // Scroll to preview
+            preview.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            status.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+
+        // Handle form submission
+        document.getElementById('configForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const config = Object.fromEntries(formData.entries());
+            
+            try {
+                // Show loading state
+                showStatus('Creating background agent...', 'success');
+                
+                // In a real implementation, this would call the MCP server
+                const agentConfig = {
+                    repository_url: config.repository_url,
+                    prompt: config.prompt,
+                    branch: config.branch,
+                    model: config.model,
+                    max_iterations: parseInt(config.max_iterations)
+                };
+
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Save config to localStorage
+                localStorage.setItem('cursorAgentConfig', JSON.stringify(agentConfig));
+                
+                // Show success message
+                showStatus(`✅ Configuration saved! Agent would be created for ${config.repository_url}`, 'success');
+                
+                // In a real implementation, you would:
+                // 1. Call the MCP server API
+                // 2. Start the background agent
+                // 3. Show real-time progress
+                
+                console.log('Agent Configuration:', agentConfig);
+                
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Load saved config on page load
+        window.addEventListener('load', function() {
+            const savedConfig = localStorage.getItem('cursorAgentConfig');
+            if (savedConfig) {
+                try {
+                    const config = JSON.parse(savedConfig);
+                    
+                    document.getElementById('repository_url').value = config.repository_url || '';
+                    document.getElementById('prompt').value = config.prompt || '';
+                    document.getElementById('branch').value = config.branch || 'main';
+                    document.getElementById('model').value = config.model || 'claude-3-5-sonnet';
+                    document.getElementById('max_iterations').value = config.max_iterations || 15;
+                    
+                    // Trigger model info update
+                    document.getElementById('model').dispatchEvent(new Event('change'));
+                    
+                } catch (e) {
+                    console.error('Error loading saved config:', e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
