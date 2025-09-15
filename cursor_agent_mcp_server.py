@@ -188,6 +188,24 @@ class CursorAgentMCPServer:
                         "properties": {},
                         "additionalProperties": False
                     }
+                ),
+                types.Tool(
+                    name="cursor_list_available_models",
+                    description="Get list of available AI models for background agents",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": False
+                    }
+                ),
+                types.Tool(
+                    name="cursor_list_repositories",
+                    description="Get list of accessible GitHub repositories",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": False
+                    }
                 )
             ]
         
@@ -207,6 +225,10 @@ class CursorAgentMCPServer:
                     result = await self._list_background_agents(arguments)
                 elif name == "cursor_get_api_usage":
                     result = await self._get_api_usage()
+                elif name == "cursor_list_available_models":
+                    result = await self._list_available_models()
+                elif name == "cursor_list_repositories":
+                    result = await self._list_repositories()
                 else:
                     raise ValueError(f"Unknown tool: {name}")
                 
@@ -663,6 +685,57 @@ class CursorAgentMCPServer:
                     "active_agents": len([a for a in self.agents.values() if a.status == "running"]),
                     "total_agents_created": len(self.agents)
                 }
+            }
+    
+    async def _list_available_models(self) -> Dict[str, Any]:
+        """Get list of available AI models for background agents"""
+        try:
+            response = await self._make_api_request("GET", "/v0/models")
+            
+            models = response.get("models", [])
+            
+            return {
+                "success": True,
+                "models": models,
+                "total_models": len(models),
+                "recommended": models[0] if models else None,
+                "message": f"Retrieved {len(models)} available models"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get available models: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": "Failed to get available models",
+                "models": [
+                    "claude-4-sonnet-thinking",
+                    "o3", 
+                    "claude-4-opus-thinking"
+                ]
+            }
+    
+    async def _list_repositories(self) -> Dict[str, Any]:
+        """Get list of accessible GitHub repositories"""
+        try:
+            response = await self._make_api_request("GET", "/v0/repositories")
+            
+            repositories = response.get("repositories", [])
+            
+            return {
+                "success": True,
+                "repositories": repositories,
+                "total_repositories": len(repositories),
+                "message": f"Retrieved {len(repositories)} accessible repositories"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get repositories: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "message": "Failed to get accessible repositories",
+                "repositories": []
             }
     
     def _generate_task_template(self, task_type: str, complexity: str) -> str:

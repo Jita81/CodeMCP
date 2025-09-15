@@ -241,6 +241,48 @@ async def stop_agent(agent_id: str):
             "error": str(e)
         }
 
+@app.get("/api/models")
+async def list_available_models():
+    """Get list of available AI models"""
+    try:
+        server = get_mcp_server()
+        
+        if not hasattr(server, '_initialized') or not server._initialized:
+            await server.initialize()
+        
+        result = await server._list_available_models()
+        return result
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "models": [
+                "claude-4-sonnet-thinking",
+                "o3", 
+                "claude-4-opus-thinking"
+            ]
+        }
+
+@app.get("/api/repositories")
+async def list_repositories():
+    """Get list of accessible repositories"""
+    try:
+        server = get_mcp_server()
+        
+        if not hasattr(server, '_initialized') or not server._initialized:
+            await server.initialize()
+        
+        result = await server._list_repositories()
+        return result
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "repositories": []
+        }
+
 async def save_config(config_data: Dict[str, Any]):
     """Save configuration to file"""
     try:

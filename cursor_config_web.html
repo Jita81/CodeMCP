@@ -100,6 +100,46 @@
             }
         }
 
+        .model-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .model-controls select {
+            flex: 1;
+        }
+
+        .update-models-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .update-models-btn:hover {
+            background: linear-gradient(135deg, #20c997, #28a745);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .update-models-btn:active {
+            transform: translateY(0);
+        }
+
+        .update-models-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .model-info {
             background: #f0f8ff;
             border: 1px solid #b3d9ff;
@@ -240,11 +280,16 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="model">🧠 AI Model</label>
-                    <select id="model" name="model" required>
-                        <option value="claude-3-5-sonnet" selected>Claude 3.5 Sonnet (Recommended)</option>
-                        <option value="claude-3-haiku">Claude 3 Haiku (Fast & Cheap)</option>
-                        <option value="gpt-4o">GPT-4o (Most Capable)</option>
-                    </select>
+                    <div class="model-controls">
+                        <select id="model" name="model" required>
+                            <option value="claude-4-sonnet-thinking" selected>Claude 4 Sonnet Thinking (Recommended)</option>
+                            <option value="o3">O3 (Advanced Reasoning)</option>
+                            <option value="claude-4-opus-thinking">Claude 4 Opus Thinking (Most Capable)</option>
+                        </select>
+                        <button type="button" id="updateModels" class="update-models-btn" onclick="updateAvailableModels()">
+                            🔄 Update Models
+                        </button>
+                    </div>
                     <div class="model-info" id="modelInfo">
                         <strong>Claude 3.5 Sonnet:</strong> Best overall performance with good balance of speed, cost, and capability. Recommended for most tasks.
                     </div>
@@ -333,26 +378,26 @@
     <script>
         // Model information data
         const modelInfo = {
-            'claude-3-5-sonnet': {
-                name: 'Claude 3.5 Sonnet',
-                description: 'Best overall performance with good balance of speed, cost, and capability. Recommended for most tasks.',
+            'claude-4-sonnet-thinking': {
+                name: 'Claude 4 Sonnet Thinking',
+                description: 'Advanced reasoning with thinking mode. Best overall performance for complex coding tasks.',
                 speed: 'Fast',
                 cost: 'Moderate',
-                capability: 'High'
+                capability: 'Very High'
             },
-            'claude-3-haiku': {
-                name: 'Claude 3 Haiku',
-                description: 'Fastest and most cost-effective option. Great for simple fixes and straightforward tasks.',
-                speed: 'Very Fast',
-                cost: 'Low',
-                capability: 'Good'
-            },
-            'gpt-4o': {
-                name: 'GPT-4o',
-                description: 'Most capable model for complex reasoning and architectural decisions. Higher cost but highest quality.',
+            'o3': {
+                name: 'O3',
+                description: 'Cutting-edge reasoning model with advanced problem-solving capabilities.',
                 speed: 'Moderate',
                 cost: 'High',
-                capability: 'Highest'
+                capability: 'Exceptional'
+            },
+            'claude-4-opus-thinking': {
+                name: 'Claude 4 Opus Thinking',
+                description: 'Most capable model with deep reasoning and complex analysis abilities.',
+                speed: 'Moderate',
+                cost: 'High',
+                capability: 'Maximum'
             }
         };
 
@@ -431,6 +476,85 @@
             }, 5000);
         }
 
+        // Update available models from Cursor API
+        async function updateAvailableModels() {
+            const updateBtn = document.getElementById('updateModels');
+            const modelSelect = document.getElementById('model');
+            const currentValue = modelSelect.value;
+            
+            try {
+                // Disable button and show loading
+                updateBtn.disabled = true;
+                updateBtn.textContent = '🔄 Updating...';
+                showStatus('Fetching available models from Cursor API...', 'success');
+                
+                // Fetch models from API
+                const response = await fetch('/api/models');
+                const data = await response.json();
+                
+                if (data.success && data.models && data.models.length > 0) {
+                    // Clear existing options
+                    modelSelect.innerHTML = '';
+                    
+                    // Add fetched models
+                    data.models.forEach((model, index) => {
+                        const option = document.createElement('option');
+                        option.value = model;
+                        option.textContent = formatModelName(model);
+                        if (index === 0) option.selected = true; // Select first as default
+                        modelSelect.appendChild(option);
+                    });
+                    
+                    // Try to restore previous selection
+                    if (currentValue && data.models.includes(currentValue)) {
+                        modelSelect.value = currentValue;
+                    }
+                    
+                    // Update model info
+                    updateModelInfo();
+                    
+                    showStatus(`✅ Updated! Found ${data.models.length} available models`, 'success');
+                } else {
+                    showStatus('⚠️ No models returned from API, using defaults', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching models:', error);
+                showStatus('❌ Failed to fetch models from API', 'error');
+            } finally {
+                // Re-enable button
+                updateBtn.disabled = false;
+                updateBtn.textContent = '🔄 Update Models';
+            }
+        }
+
+        // Format model name for display
+        function formatModelName(model) {
+            const nameMap = {
+                'claude-4-sonnet-thinking': 'Claude 4 Sonnet Thinking (Recommended)',
+                'o3': 'O3 (Advanced Reasoning)',
+                'claude-4-opus-thinking': 'Claude 4 Opus Thinking (Most Capable)'
+            };
+            return nameMap[model] || model.charAt(0).toUpperCase() + model.slice(1).replace(/-/g, ' ');
+        }
+
+        // Update model information display
+        function updateModelInfo() {
+            const modelSelect = document.getElementById('model');
+            const modelInfoDiv = document.getElementById('modelInfo');
+            const selectedModel = modelSelect.value;
+            
+            if (modelInfo[selectedModel]) {
+                const info = modelInfo[selectedModel];
+                modelInfoDiv.innerHTML = `
+                    <strong>${info.name}:</strong> ${info.description}
+                    <br><em>Speed: ${info.speed} | Cost: ${info.cost} | Capability: ${info.capability}</em>
+                `;
+            } else {
+                modelInfoDiv.innerHTML = `<strong>${formatModelName(selectedModel)}:</strong> Advanced AI model for autonomous coding tasks.`;
+            }
+        }
+
         // Handle form submission
         document.getElementById('configForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -482,17 +606,23 @@
                     document.getElementById('repository_url').value = config.repository_url || '';
                     document.getElementById('prompt').value = config.prompt || '';
                     document.getElementById('branch').value = config.branch || 'main';
-                    document.getElementById('model').value = config.model || 'claude-3-5-sonnet';
+                    document.getElementById('model').value = config.model || 'claude-4-sonnet-thinking';
                     document.getElementById('max_iterations').value = config.max_iterations || 15;
                     
                     // Trigger model info update
-                    document.getElementById('model').dispatchEvent(new Event('change'));
+                    updateModelInfo();
                     
                 } catch (e) {
                     console.error('Error loading saved config:', e);
                 }
             }
         });
+
+        // Add event listener for model selection change
+        document.getElementById('model').addEventListener('change', updateModelInfo);
+        
+        // Initialize model info on page load
+        updateModelInfo();
     </script>
 </body>
 </html>
