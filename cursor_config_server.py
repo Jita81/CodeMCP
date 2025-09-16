@@ -326,6 +326,24 @@ async def list_agents(limit: int = 20, cursor: str = None):
             "agents": []
         }
 
+@app.get("/api/agent/{agent_id}/status")
+async def get_agent_status(agent_id: str):
+    """Get status of a specific agent"""
+    try:
+        server = get_mcp_server()
+        
+        if not hasattr(server, '_initialized') or not server._initialized:
+            await server.initialize()
+        
+        result = await server._get_agent_status({"agent_id": agent_id})
+        return result
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 async def save_config(config_data: Dict[str, Any]):
     """Save configuration to file"""
     try:

@@ -475,11 +475,35 @@
             text-transform: uppercase;
         }
 
-        .status-running { background: #d4edda; color: #155724; }
+        .status-running { 
+            background: #d4edda; 
+            color: #155724; 
+            animation: pulse 2s infinite;
+        }
         .status-completed { background: #d1ecf1; color: #0c5460; }
         .status-failed { background: #f8d7da; color: #721c24; }
         .status-stopped { background: #e2e3e5; color: #383d41; }
-        .status-creating { background: #fff3cd; color: #856404; }
+        .status-creating { 
+            background: #fff3cd; 
+            color: #856404; 
+            animation: pulse 2s infinite;
+        }
+
+        /* Pulse animation for running/creating agents */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Real-time monitoring indicator */
+        #monitoringStatus {
+            transition: all 0.3s ease;
+        }
+
+        #countdownDisplay {
+            transition: all 0.3s ease;
+        }
 
         .agent-details {
             margin: 10px 0;
@@ -662,6 +686,9 @@
                 <button type="button" id="refreshAgents" class="btn" onclick="loadAgents()">
                     🔄 Refresh Agents
                 </button>
+                <div id="monitoringStatus" style="display: none; margin-left: 15px; padding: 8px 12px; background: #e8f5e8; color: #2e7d32; border-radius: 4px; font-size: 14px; font-weight: bold;">
+                    🔄 Real-time monitoring active
+                </div>
             </div>
             
             <div class="agent-list" id="agentList">
@@ -754,32 +781,70 @@
         }
 
         // Load and display agents
-        async function loadAgents() {
+        async function loadAgents(silent = false) {
             const agentList = document.getElementById('agentList');
             const refreshBtn = document.getElementById('refreshAgents');
             
             try {
-                refreshBtn.disabled = true;
-                refreshBtn.textContent = '🔄 Loading...';
-                agentList.innerHTML = '<div class="loading-agents"><p>Loading agents...</p></div>';
+                if (!silent) {
+                    refreshBtn.disabled = true;
+                    refreshBtn.textContent = '🔄 Loading...';
+                    agentList.innerHTML = '<div class="loading-agents"><p>Loading agents...</p></div>';
+                }
                 
                 const response = await fetch('/api/agents');
                 const data = await response.json();
                 
                 if (data.success && data.agents && data.agents.length > 0) {
                     displayAgents(data.agents);
-                    showStatus(`✅ Loaded ${data.agents.length} agents`, 'success');
+                    
+                    // Check if we have RUNNING agents and manage monitoring accordingly
+                    const hasRunning = hasRunningAgents(data.agents);
+                    
+                    if (hasRunning) {
+                        // Start monitoring if we have running agents
+                        if (!monitoringInterval) {
+                            startRealTimeMonitoring();
+                        }
+                    } else {
+                        // Stop monitoring if no running agents
+                        if (monitoringInterval) {
+                            stopRealTimeMonitoring();
+                        }
+                    }
+                    
+                    if (!silent) {
+                        showStatus(`✅ Loaded ${data.agents.length} agents`, 'success');
+                    }
                 } else {
                     agentList.innerHTML = '<div class="no-agents"><p>No agents found. Create your first agent!</p></div>';
-                    showStatus('ℹ️ No agents found', 'info');
+                    
+                    // Stop monitoring if no agents
+                    if (monitoringInterval) {
+                        stopRealTimeMonitoring();
+                    }
+                    
+                    if (!silent) {
+                        showStatus('ℹ️ No agents found', 'info');
+                    }
                 }
             } catch (error) {
                 console.error('Error loading agents:', error);
                 agentList.innerHTML = '<div class="no-agents"><p>Error loading agents. Please try again.</p></div>';
-                showStatus('❌ Failed to load agents', 'error');
+                
+                // Stop monitoring on error
+                if (monitoringInterval) {
+                    stopRealTimeMonitoring();
+                }
+                
+                if (!silent) {
+                    showStatus('❌ Failed to load agents', 'error');
+                }
             } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.textContent = '🔄 Refresh Agents';
+                if (!silent) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = '🔄 Refresh Agents';
+                }
             }
         }
 
@@ -1366,6 +1431,108 @@
         restoreRepositoryData();
         restoreBranchData();
         
+        // Real-time monitoring variables
+        let monitoringInterval = null;
+        let countdownInterval = null;
+        let countdownSeconds = 5;
+
+        // Start real-time monitoring for RUNNING agents
+        function startRealTimeMonitoring() {
+            // Clear any existing monitoring
+            stopRealTimeMonitoring();
+            
+            // Start monitoring every 5 seconds
+            monitoringInterval = setInterval(() => {
+                loadAgents(true); // Silent refresh
+            }, 5000);
+            
+            // Start countdown timer
+            startCountdownTimer();
+            
+            // Show monitoring status
+            const monitoringStatus = document.getElementById('monitoringStatus');
+            if (monitoringStatus) {
+                monitoringStatus.style.display = 'inline-block';
+            }
+            
+            console.log('🔄 Real-time monitoring started');
+        }
+
+        // Stop real-time monitoring
+        function stopRealTimeMonitoring() {
+            if (monitoringInterval) {
+                clearInterval(monitoringInterval);
+                monitoringInterval = null;
+            }
+            
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            
+            // Hide countdown display
+            const countdownDisplay = document.getElementById('countdownDisplay');
+            if (countdownDisplay) {
+                countdownDisplay.style.display = 'none';
+            }
+            
+            // Hide monitoring status
+            const monitoringStatus = document.getElementById('monitoringStatus');
+            if (monitoringStatus) {
+                monitoringStatus.style.display = 'none';
+            }
+            
+            console.log('⏹️ Real-time monitoring stopped');
+        }
+
+        // Start countdown timer
+        function startCountdownTimer() {
+            countdownSeconds = 5;
+            updateCountdownDisplay();
+            
+            countdownInterval = setInterval(() => {
+                countdownSeconds--;
+                updateCountdownDisplay();
+                
+                if (countdownSeconds <= 0) {
+                    countdownSeconds = 5; // Reset for next cycle
+                }
+            }, 1000);
+        }
+
+        // Update countdown display
+        function updateCountdownDisplay() {
+            let countdownDisplay = document.getElementById('countdownDisplay');
+            
+            if (!countdownDisplay) {
+                // Create countdown display if it doesn't exist
+                const refreshBtn = document.getElementById('refreshAgents');
+                countdownDisplay = document.createElement('div');
+                countdownDisplay.id = 'countdownDisplay';
+                countdownDisplay.style.cssText = `
+                    display: inline-block;
+                    margin-left: 10px;
+                    padding: 4px 8px;
+                    background: #e3f2fd;
+                    color: #1976d2;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: bold;
+                `;
+                refreshBtn.parentNode.insertBefore(countdownDisplay, refreshBtn.nextSibling);
+            }
+            
+            countdownDisplay.textContent = `Next refresh in ${countdownSeconds}s`;
+            countdownDisplay.style.display = 'inline-block';
+        }
+
+        // Check if any agents are RUNNING
+        function hasRunningAgents(agents) {
+            return agents && agents.some(agent => 
+                agent.status && agent.status.toUpperCase() === 'RUNNING'
+            );
+        }
+
         // Load agents on page load since manage view is default
         loadAgents();
     </script>
