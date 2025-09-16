@@ -21,6 +21,7 @@ import os
 import json
 import asyncio
 import logging
+import time
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass
@@ -70,8 +71,138 @@ class CursorAgentMCPServer:
         self.session: Optional[aiohttp.ClientSession] = None
         self.agents: Dict[str, BackgroundAgent] = {}
         
+        # Cache for models and repositories to avoid repeated API calls
+        self._models_cache = None
+        self._repositories_cache = None
+        self._branches_cache = {}  # Cache branches per repository
+        self._models_cache_timestamp = None
+        self._repositories_cache_timestamp = None
+        self._branches_cache_timestamp = {}  # Cache timestamps per repository
+        self._cache_duration = 300  # 5 minutes cache duration
+        
         # Setup MCP server handlers
         self._setup_mcp_handlers()
+    
+    def _is_cache_valid(self, cache_timestamp: Optional[float]) -> bool:
+        """Check if cache is still valid based on timestamp"""
+        if cache_timestamp is None:
+            return False
+        return (time.time() - cache_timestamp) < self._cache_duration
+    
+    def clear_cache(self):
+        """Clear all cached data"""
+        self._models_cache = None
+        self._repositories_cache = None
+        self._branches_cache = {}
+        self._models_cache_timestamp = None
+        self._repositories_cache_timestamp = None
+        self._branches_cache_timestamp = {}
+        logger.info("Cache cleared")
+    
+    def _extract_repo_info(self, repository_url: str) -> tuple[str, str]:
+        """Extract owner and repo name from GitHub URL"""
+        try:
+            # Handle different GitHub URL formats
+            if "github.com" in repository_url:
+                parts = repository_url.replace("https://github.com/", "").replace("http://github.com/", "").rstrip("/")
+                if "/" in parts:
+                    owner, repo = parts.split("/", 1)
+                    return owner, repo
+            raise ValueError(f"Invalid GitHub URL format: {repository_url}")
+        except Exception as e:
+            logger.error(f"Failed to extract repo info from {repository_url}: {e}")
+            raise ValueError(f"Invalid repository URL: {repository_url}")
+    
+    async def _list_repository_branches(self, repository_url: str, force_refresh: bool = False) -> Dict[str, Any]:
+        """Get list of branches for a specific repository"""
+        try:
+            owner, repo = self._extract_repo_info(repository_url)
+            cache_key = f"{owner}/{repo}"
+            
+            # Check cache first unless force refresh is requested
+            if not force_refresh and self._is_cache_valid(self._branches_cache_timestamp.get(cache_key)) and cache_key in self._branches_cache:
+                logger.info(f"Returning cached branches data for {cache_key}")
+                return self._branches_cache[cache_key]
+            
+            # Fetch branches from GitHub API
+            github_url = f"https://api.github.com/repos/{owner}/{repo}/branches"
+            headers = {
+                "Accept": "application/vnd.github.v3+json",
+                "User-Agent": "Cursor-MCP-Server"
+            }
+            
+            # Add GitHub token if available (for private repos)
+            github_token = os.getenv("GITHUB_TOKEN")
+            if github_token:
+                headers["Authorization"] = f"token {github_token}"
+            
+            async with self.session.get(github_url, headers=headers) as response:
+                if response.status == 200:
+                    branches_data = await response.json()
+                    branches = [branch["name"] for branch in branches_data]
+                    
+                    result = {
+                        "success": True,
+                        "repository": repository_url,
+                        "owner": owner,
+                        "repo": repo,
+                        "branches": branches,
+                        "total_branches": len(branches),
+                        "message": f"Retrieved {len(branches)} branches for {owner}/{repo}"
+                    }
+                    
+                    # Cache the result
+                    self._branches_cache[cache_key] = result
+                    self._branches_cache_timestamp[cache_key] = time.time()
+                    logger.info(f"Cached {len(branches)} branches for {cache_key} for {self._cache_duration} seconds")
+                    
+                    return result
+                    
+                elif response.status == 404:
+                    return {
+                        "success": False,
+                        "error": "Repository not found or not accessible",
+                        "repository": repository_url,
+                        "branches": ["main", "master", "develop"],
+                        "message": f"Repository {owner}/{repo} not found or not accessible. Using common branch names."
+                    }
+                elif response.status == 401:
+                    return {
+                        "success": False,
+                        "error": "Authentication required for private repository",
+                        "repository": repository_url,
+                        "branches": ["main", "master", "develop", "feature/new-feature"],
+                        "message": f"Private repository {owner}/{repo} requires GitHub token. Using common branch names."
+                    }
+                else:
+                    error_text = await response.text()
+                    return {
+                        "success": False,
+                        "error": f"GitHub API error: {response.status}",
+                        "repository": repository_url,
+                        "branches": ["main", "master", "develop", "feature/new-feature"],
+                        "message": f"Failed to fetch branches: {error_text}. Using common branch names."
+                    }
+                    
+        except Exception as e:
+            logger.error(f"Failed to get branches for {repository_url}: {e}")
+            # Return cached data if available, otherwise fallback
+            try:
+                owner, repo = self._extract_repo_info(repository_url)
+                cache_key = f"{owner}/{repo}"
+                if cache_key in self._branches_cache:
+                    logger.info(f"Returning cached branches data due to API error for {cache_key}")
+                    return self._branches_cache[cache_key]
+            except:
+                pass
+            
+            return {
+                "success": False,
+                "error": str(e),
+                "repository": repository_url,
+                "branches": ["main", "master", "develop"],  # Common fallback branches
+                "message": f"Failed to fetch branches: {str(e)}"
+            }
     
     def _setup_mcp_handlers(self):
         """Setup MCP server request handlers"""
@@ -206,6 +337,26 @@ class CursorAgentMCPServer:
                         "properties": {},
                         "additionalProperties": False
                     }
+                ),
+                types.Tool(
+                    name="cursor_list_repository_branches",
+                    description="Get list of branches for a specific GitHub repository",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "repository_url": {
+                                "type": "string",
+                                "description": "GitHub repository URL (e.g., https://github.com/owner/repo)"
+                            },
+                            "force_refresh": {
+                                "type": "boolean",
+                                "description": "Force refresh the branch list from GitHub API",
+                                "default": False
+                            }
+                        },
+                        "required": ["repository_url"],
+                        "additionalProperties": False
+                    }
                 )
             ]
         
@@ -229,6 +380,12 @@ class CursorAgentMCPServer:
                     result = await self._list_available_models()
                 elif name == "cursor_list_repositories":
                     result = await self._list_repositories()
+                elif name == "cursor_list_repository_branches":
+                    repository_url = arguments.get("repository_url")
+                    force_refresh = arguments.get("force_refresh", False)
+                    if not repository_url:
+                        raise ValueError("repository_url is required")
+                    result = await self._list_repository_branches(repository_url, force_refresh)
                 else:
                     raise ValueError(f"Unknown tool: {name}")
                 
@@ -463,6 +620,7 @@ class CursorAgentMCPServer:
                 }
             }
             
+            
             # Add webhook if configured
             if hasattr(self.config, 'webhook_url') and self.config.webhook_url:
                 payload["webhook"] = {
@@ -687,14 +845,19 @@ class CursorAgentMCPServer:
                 }
             }
     
-    async def _list_available_models(self) -> Dict[str, Any]:
+    async def _list_available_models(self, force_refresh: bool = False) -> Dict[str, Any]:
         """Get list of available AI models for background agents"""
+        # Check cache first unless force refresh is requested
+        if not force_refresh and self._is_cache_valid(self._models_cache_timestamp) and self._models_cache:
+            logger.info("Returning cached models data")
+            return self._models_cache
+        
         try:
             response = await self._make_api_request("GET", "/v0/models")
             
             models = response.get("models", [])
             
-            return {
+            result = {
                 "success": True,
                 "models": models,
                 "total_models": len(models),
@@ -702,8 +865,20 @@ class CursorAgentMCPServer:
                 "message": f"Retrieved {len(models)} available models"
             }
             
+            # Cache the result
+            self._models_cache = result
+            self._models_cache_timestamp = time.time()
+            logger.info(f"Cached {len(models)} models for {self._cache_duration} seconds")
+            
+            return result
+            
         except Exception as e:
             logger.error(f"Failed to get available models: {e}")
+            # Return cached data if available, otherwise fallback
+            if self._models_cache:
+                logger.info("Returning cached models data due to API error")
+                return self._models_cache
+            
             return {
                 "success": False,
                 "error": str(e),
@@ -715,22 +890,39 @@ class CursorAgentMCPServer:
                 ]
             }
     
-    async def _list_repositories(self) -> Dict[str, Any]:
+    async def _list_repositories(self, force_refresh: bool = False) -> Dict[str, Any]:
         """Get list of accessible GitHub repositories"""
+        # Check cache first unless force refresh is requested
+        if not force_refresh and self._is_cache_valid(self._repositories_cache_timestamp) and self._repositories_cache:
+            logger.info("Returning cached repositories data")
+            return self._repositories_cache
+        
         try:
             response = await self._make_api_request("GET", "/v0/repositories")
             
             repositories = response.get("repositories", [])
             
-            return {
+            result = {
                 "success": True,
                 "repositories": repositories,
                 "total_repositories": len(repositories),
                 "message": f"Retrieved {len(repositories)} accessible repositories"
             }
             
+            # Cache the result
+            self._repositories_cache = result
+            self._repositories_cache_timestamp = time.time()
+            logger.info(f"Cached {len(repositories)} repositories for {self._cache_duration} seconds")
+            
+            return result
+            
         except Exception as e:
             logger.error(f"Failed to get repositories: {e}")
+            # Return cached data if available, otherwise fallback
+            if self._repositories_cache:
+                logger.info("Returning cached repositories data due to API error")
+                return self._repositories_cache
+            
             return {
                 "success": False,
                 "error": str(e),

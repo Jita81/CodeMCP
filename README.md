@@ -1,14 +1,17 @@
 # 🤖 Cursor Background Agent MCP Server
 
-A powerful Model Context Protocol (MCP) server that integrates with the Cursor Background Agent API, enabling programmatic creation and management of AI-powered autonomous coding agents.
+A powerful Model Context Protocol (MCP) server that integrates with the Cursor Background Agent API, enabling programmatic creation and management of AI-powered autonomous coding agents with a comprehensive web interface.
 
 ## 🚀 Features
 
 - **🔧 Complete MCP Server**: Full integration with Cursor Background Agent API
-- **🌐 Web Interface**: Beautiful web frontend for configuring and creating agents
-- **⚡ Real-time Monitoring**: Track agent progress and status
-- **🔄 Full API Coverage**: All Cursor Background Agent endpoints supported
-- **📊 Agent Management**: Create, monitor, and manage multiple agents
+- **🌐 Advanced Web Interface**: Beautiful, responsive web frontend with dual-mode operation
+- **📋 Agent Management Dashboard**: Default view showing all existing agents with detailed information
+- **➕ On-Demand Agent Creation**: Switch to creation mode when needed
+- **⚡ Real-time Monitoring**: Track agent progress, status, and completion
+- **🔄 Dynamic Data Loading**: Auto-populate models, repositories, and branches
+- **📊 Comprehensive Agent Details**: View agent summaries, target branches, and creation dates
+- **🎯 Smart Caching**: Efficient API usage with intelligent caching
 - **🛡️ Secure**: Proper authentication and error handling
 - **📱 Responsive**: Modern web interface that works on all devices
 
@@ -43,13 +46,13 @@ chmod +x start_web_config.sh
 ./start_web_config.sh
 ```
 
-### 4. Create Background Agents
+### 4. Use the Web Interface
 
 1. Open http://localhost:8080 in your browser
-2. Enter your repository URL
-3. Choose your AI model (claude-4-sonnet, gpt-5, etc.)
-4. Describe what you want the agent to build
-5. Click "Create Agent"
+2. **Default View**: See all your existing agents with detailed information
+3. **Create New Agent**: Click "➕ Create New Agent" to switch to creation mode
+4. **Dynamic Configuration**: Use "Update" buttons to load available models, repositories, and branches
+5. **Agent Management**: View agent progress, check PRs, and manage running agents
 
 ## 🎯 Available AI Models
 
@@ -128,20 +131,42 @@ Edit `cursor_mcp_config.json` to customize:
 
 ## 🌐 Web Interface Usage
 
-### Creating an Agent
+### Agent Management Dashboard (Default View)
 
-1. **Repository URL**: Enter the GitHub repository URL
-2. **AI Model**: Choose from available models
-3. **Target Branch**: Specify the branch to work on
-4. **Task Description**: Describe what you want built
-5. **Max Iterations**: Set how thorough the agent should be
+The interface opens to a comprehensive agent management dashboard showing:
 
-### Monitoring Progress
+- **📋 Agent List**: All your existing agents with detailed information
+- **🔄 Refresh Button**: Update agent status and information
+- **📊 Agent Details**: Name, repository, branches, summary, creation date
+- **⚡ Quick Actions**: View agent progress, check PRs, stop agents
+- **🎯 Status Indicators**: Color-coded status badges (RUNNING, COMPLETED, FAILED, etc.)
 
-- **Real-time Status**: See current agent status
-- **Branch Creation**: Monitor new branches being created
-- **Pull Requests**: Track when PRs are opened
-- **Completion**: Get notified when work is finished
+### Creating New Agents
+
+Switch to creation mode by clicking "➕ Create New Agent":
+
+1. **📂 Repository Selection**: 
+   - Enter GitHub repository URL manually, OR
+   - Click "🔄 Update Repos" to load your accessible repositories
+   - Select from dropdown for easy access
+2. **🧠 AI Model Selection**:
+   - Click "🔄 Update Models" to load available models
+   - Choose from Claude, GPT, and other models
+3. **🌿 Target Branch**:
+   - Click "🔄 Update Branches" to load repository branches
+   - Select existing branch or create new one
+4. **📝 Task Description**: Describe what you want the agent to build
+5. **🚀 Create Agent**: Launch the autonomous coding agent
+
+### Dynamic Data Loading
+
+The interface intelligently loads data from the Cursor API:
+
+- **🤖 Models**: Real-time list of available AI models
+- **📁 Repositories**: Your accessible GitHub repositories
+- **🌿 Branches**: Live branch information from GitHub
+- **💾 Smart Caching**: Data persists across page refreshes
+- **⚡ Efficient Updates**: Only refresh when needed
 
 ## 📊 Agent Workflow
 
@@ -267,9 +292,12 @@ export LOG_LEVEL=DEBUG
 |--------|----------|-------------|
 | POST | `/api/create-agent` | Create a new background agent |
 | GET | `/api/agent-status/{id}` | Get agent status |
-| GET | `/api/agents` | List all agents |
+| GET | `/api/agents` | List all agents with pagination |
 | POST | `/api/agent/{id}/followup` | Add follow-up instruction |
 | DELETE | `/api/agent/{id}` | Stop/delete agent |
+| GET | `/api/models` | Get available AI models |
+| GET | `/api/repositories` | Get accessible repositories |
+| GET | `/api/branches` | Get repository branches |
 
 ### MCP Resources
 
@@ -298,15 +326,37 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
+## 🆕 Latest Features
+
+### Agent Management Dashboard
+- **Default View**: Opens directly to your agent management dashboard
+- **Real-time Status**: See all agents with current status and progress
+- **Detailed Information**: View agent names, repositories, branches, summaries, and creation dates
+- **Quick Actions**: Direct links to view agents in Cursor, check PRs, and stop agents
+
+### Dynamic Data Loading
+- **Smart Dropdowns**: Auto-populate models, repositories, and branches from APIs
+- **Intelligent Caching**: Data persists across page refreshes for better performance
+- **Rate Limit Handling**: Efficient API usage with built-in caching and retry logic
+- **Real-time Updates**: Refresh data when needed with "Update" buttons
+
+### Enhanced User Experience
+- **Dual-Mode Interface**: Switch between agent management and creation modes
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
+- **Status Indicators**: Color-coded badges for easy status identification
+- **Persistent Data**: Form data and selections survive page refreshes
+
 ## 🎯 What This System Enables
 
 With this MCP server, you can:
 
 - **🤖 Create Autonomous Coding Agents** that work independently on your repositories
-- **🌐 Use a Beautiful Web Interface** to configure and monitor agents
+- **🌐 Use an Advanced Web Interface** with dual-mode operation for management and creation
 - **📊 Track Real-time Progress** as agents write code and make commits
 - **🔄 Manage Multiple Projects** with different agents working simultaneously
 - **⚡ Integrate with Any Application** using the MCP protocol
 - **🛡️ Maintain Security** with proper authentication and error handling
+- **📋 Monitor All Agents** from a centralized dashboard with detailed information
+- **🎯 Dynamic Configuration** with smart data loading and caching
 
 **Transform your development workflow with AI agents that code autonomously!** 🚀

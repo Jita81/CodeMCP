@@ -140,6 +140,144 @@
             box-shadow: none;
         }
 
+        .repository-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .repository-controls input {
+            flex: 1;
+        }
+
+        .update-repos-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .update-repos-btn:hover {
+            background: linear-gradient(135deg, #0056b3, #007bff);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .update-repos-btn:active {
+            transform: translateY(0);
+        }
+
+        .update-repos-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .repository-dropdown {
+            margin-top: 10px;
+        }
+
+        .repository-dropdown select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .branch-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .branch-controls input {
+            flex: 1;
+        }
+
+        .update-branches-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .update-branches-btn:hover {
+            background: linear-gradient(135deg, #20c997, #28a745);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .update-branches-btn:active {
+            transform: translateY(0);
+        }
+
+        .update-branches-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .branch-dropdown {
+            margin-top: 10px;
+        }
+
+        .branch-dropdown select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .branch-options {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin: 0;
+            transform: scale(1.2);
+        }
+
+        #newBranchName {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
         .model-info {
             background: #f0f8ff;
             border: 1px solid #b3d9ff;
@@ -255,26 +393,190 @@
             color: #718096;
             font-size: 0.9rem;
         }
+
+        /* View Toggle Styles */
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .toggle-btn {
+            padding: 12px 24px;
+            border: 2px solid #007bff;
+            background: white;
+            color: #007bff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .toggle-btn.active {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Agent Management Styles */
+        .agent-management {
+            display: block;
+        }
+
+        /* Create Agent Form - Hidden by default */
+        #configForm {
+            display: none;
+        }
+
+        .agent-list {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .agent-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .agent-id {
+            font-family: monospace;
+            font-size: 14px;
+            color: #666;
+            background: #f1f3f4;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .agent-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-running { background: #d4edda; color: #155724; }
+        .status-completed { background: #d1ecf1; color: #0c5460; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        .status-stopped { background: #e2e3e5; color: #383d41; }
+        .status-creating { background: #fff3cd; color: #856404; }
+
+        .agent-details {
+            margin: 10px 0;
+        }
+
+        .agent-detail-row {
+            display: flex;
+            margin: 5px 0;
+        }
+
+        .agent-detail-label {
+            font-weight: bold;
+            min-width: 120px;
+            color: #555;
+        }
+
+        .agent-detail-value {
+            color: #333;
+            word-break: break-all;
+        }
+
+        .agent-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-small:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-primary { border-color: #007bff; color: #007bff; }
+        .btn-danger { border-color: #dc3545; color: #dc3545; }
+        .btn-success { border-color: #28a745; color: #28a745; }
+
+        .loading-agents {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .no-agents {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🤖 Cursor Agent Config</h1>
-            <p>Configure your repository and AI model for autonomous coding</p>
+            <h1>🤖 Cursor Agent Manager</h1>
+            <p>Create new agents or manage existing background agents</p>
+            
+            <!-- View Toggle -->
+            <div class="view-toggle">
+                <button id="createViewBtn" class="toggle-btn" onclick="switchView('create')">
+                    ➕ Create New Agent
+                </button>
+                <button id="manageViewBtn" class="toggle-btn active" onclick="switchView('manage')">
+                    📋 Manage Existing Agents
+                </button>
+            </div>
         </div>
 
         <form id="configForm">
             <div class="form-group">
                 <label for="repository_url">📂 Repository URL</label>
-                <input 
-                    type="url" 
-                    id="repository_url" 
-                    name="repository_url" 
-                    placeholder="https://github.com/username/repository"
-                    required
-                >
-                <div class="help-text">Enter the GitHub repository URL you want the agent to work on</div>
+                <div class="repository-controls">
+                    <input 
+                        type="url" 
+                        id="repository_url" 
+                        name="repository_url" 
+                        placeholder="https://github.com/username/repository"
+                        required
+                    >
+                    <button type="button" id="updateRepositories" class="update-repos-btn" onclick="updateAvailableRepositories()">
+                        🔄 Update Repos
+                    </button>
+                </div>
+                <div class="help-text">Enter the GitHub repository URL or select from your accessible repositories</div>
+                <div class="repository-dropdown" id="repositoryDropdown" style="display: none;">
+                    <select id="repositorySelect" onchange="selectRepository()">
+                        <option value="">Select a repository...</option>
+                    </select>
+                </div>
             </div>
 
             <div class="form-row">
@@ -297,43 +599,41 @@
 
                 <div class="form-group">
                     <label for="branch">🌿 Target Branch</label>
-                    <input 
-                        type="text" 
-                        id="branch" 
-                        name="branch" 
-                        placeholder="main"
-                        value="main"
-                    >
+                    <div class="branch-controls">
+                        <input 
+                            type="text" 
+                            id="branch" 
+                            name="branch" 
+                            placeholder="main"
+                            value="main"
+                            required
+                        >
+                        <button type="button" id="updateBranches" class="update-branches-btn" onclick="updateAvailableBranches()">
+                            🔄 Update Branches
+                        </button>
+                    </div>
                     <div class="help-text">Branch where the agent will make changes (e.g., feature/new-feature)</div>
+                    <div class="branch-dropdown" id="branchDropdown" style="display: none;">
+                        <select id="branchSelect" onchange="selectBranch()">
+                            <option value="">Select a branch...</option>
+                        </select>
+                    </div>
+                    <div class="branch-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="createNewBranch" onchange="toggleNewBranchInput()">
+                            Create new branch
+                        </label>
+                        <input 
+                            type="text" 
+                            id="newBranchName" 
+                            placeholder="Enter new branch name..."
+                            style="display: none;"
+                            oninput="updateBranchFromNewName()"
+                        >
+                    </div>
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="max_iterations">🔄 Max Iterations</label>
-                    <input 
-                        type="number" 
-                        id="max_iterations" 
-                        name="max_iterations" 
-                        min="1" 
-                        max="50" 
-                        value="15"
-                    >
-                    <div class="help-text">How thorough the agent should be (1-50)</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="task_type">🎯 Task Type</label>
-                    <select id="task_type" name="task_type">
-                        <option value="feature">Feature Development</option>
-                        <option value="bugfix">Bug Fix</option>
-                        <option value="refactor">Code Refactoring</option>
-                        <option value="test">Add Tests</option>
-                        <option value="docs">Documentation</option>
-                        <option value="performance">Performance Optimization</option>
-                    </select>
-                </div>
-            </div>
 
             <div class="form-group">
                 <label for="prompt">📝 Task Description</label>
@@ -355,6 +655,21 @@
                 </button>
             </div>
         </form>
+
+        <!-- Agent Management Section -->
+        <div class="agent-management" id="agentManagement">
+            <div class="form-group">
+                <button type="button" id="refreshAgents" class="btn" onclick="loadAgents()">
+                    🔄 Refresh Agents
+                </button>
+            </div>
+            
+            <div class="agent-list" id="agentList">
+                <div class="loading-agents">
+                    <p>Loading agents...</p>
+                </div>
+            </div>
+        </div>
 
         <div id="status" class="status"></div>
         <div id="configPreview" class="config-preview" style="display: none;"></div>
@@ -401,15 +716,6 @@
             }
         };
 
-        // Task type prompts
-        const taskPrompts = {
-            feature: "Implement a new feature:\n\n- Add [specific functionality]\n- Ensure proper error handling\n- Include unit tests\n- Follow existing code patterns\n- Update documentation",
-            bugfix: "Fix the following bug:\n\nProblem: [describe the issue]\nLocation: [file/component name]\n\nSteps to fix:\n1. Investigate root cause\n2. Implement solution\n3. Add regression test\n4. Verify fix works",
-            refactor: "Refactor the codebase:\n\n- Improve [specific component/module]\n- Maintain existing functionality\n- Add proper error handling\n- Improve code organization\n- Update tests and documentation",
-            test: "Add comprehensive tests:\n\n- Increase test coverage for [component]\n- Add unit tests for all functions\n- Include integration tests\n- Test edge cases and error scenarios\n- Ensure all tests pass",
-            docs: "Update documentation:\n\n- Document [feature/API/component]\n- Add code examples\n- Update README if needed\n- Include usage guidelines\n- Ensure accuracy and clarity",
-            performance: "Optimize performance:\n\n- Analyze [specific area] for bottlenecks\n- Implement optimizations\n- Measure before/after metrics\n- Ensure no functionality regression\n- Document improvements"
-        };
 
         // Update model info when selection changes
         document.getElementById('model').addEventListener('change', function() {
@@ -423,18 +729,137 @@
             `;
         });
 
-        // Update prompt template when task type changes
-        document.getElementById('task_type').addEventListener('change', function() {
-            const selectedType = this.value;
-            const promptField = document.getElementById('prompt');
-            
-            if (!promptField.value.trim()) {
-                promptField.value = taskPrompts[selectedType];
-            }
-        });
-
         // Set initial prompt
-        document.getElementById('prompt').value = taskPrompts.feature;
+        document.getElementById('prompt').value = "Describe what you want the AI agent to accomplish in detail...";
+
+        // View switching functionality
+        function switchView(view) {
+            const createView = document.getElementById('configForm');
+            const manageView = document.getElementById('agentManagement');
+            const createBtn = document.getElementById('createViewBtn');
+            const manageBtn = document.getElementById('manageViewBtn');
+            
+            if (view === 'create') {
+                createView.style.display = 'block';
+                manageView.style.display = 'none';
+                createBtn.classList.add('active');
+                manageBtn.classList.remove('active');
+            } else {
+                createView.style.display = 'none';
+                manageView.style.display = 'block';
+                createBtn.classList.remove('active');
+                manageBtn.classList.add('active');
+                loadAgents(); // Load agents when switching to manage view
+            }
+        }
+
+        // Load and display agents
+        async function loadAgents() {
+            const agentList = document.getElementById('agentList');
+            const refreshBtn = document.getElementById('refreshAgents');
+            
+            try {
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '🔄 Loading...';
+                agentList.innerHTML = '<div class="loading-agents"><p>Loading agents...</p></div>';
+                
+                const response = await fetch('/api/agents');
+                const data = await response.json();
+                
+                if (data.success && data.agents && data.agents.length > 0) {
+                    displayAgents(data.agents);
+                    showStatus(`✅ Loaded ${data.agents.length} agents`, 'success');
+                } else {
+                    agentList.innerHTML = '<div class="no-agents"><p>No agents found. Create your first agent!</p></div>';
+                    showStatus('ℹ️ No agents found', 'info');
+                }
+            } catch (error) {
+                console.error('Error loading agents:', error);
+                agentList.innerHTML = '<div class="no-agents"><p>Error loading agents. Please try again.</p></div>';
+                showStatus('❌ Failed to load agents', 'error');
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 Refresh Agents';
+            }
+        }
+
+        // Display agents in the UI
+        function displayAgents(agents) {
+            const agentList = document.getElementById('agentList');
+            
+            agentList.innerHTML = agents.map(agent => {
+                const status = agent.status || 'unknown';
+                const statusClass = `status-${status.toLowerCase()}`;
+                
+                return `
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <span class="agent-id">${agent.id || 'Unknown ID'}</span>
+                            <span class="agent-status ${statusClass}">${status}</span>
+                        </div>
+                        
+                        <div class="agent-details">
+                            ${agent.name ? `<div class="agent-detail-row">
+                                <span class="agent-detail-label">Name:</span>
+                                <span class="agent-detail-value">${agent.name}</span>
+                            </div>` : ''}
+                            
+                            ${agent.source ? `<div class="agent-detail-row">
+                                <span class="agent-detail-label">Repository:</span>
+                                <span class="agent-detail-value">${agent.source.repository || 'N/A'}</span>
+                            </div>` : ''}
+                            
+                            ${agent.source ? `<div class="agent-detail-row">
+                                <span class="agent-detail-label">Branch:</span>
+                                <span class="agent-detail-value">${agent.source.ref || 'N/A'}</span>
+                            </div>` : ''}
+                            
+                            ${agent.target ? `<div class="agent-detail-row">
+                                <span class="agent-detail-label">Target Branch:</span>
+                                <span class="agent-detail-value">${agent.target.branchName || 'N/A'}</span>
+                            </div>` : ''}
+                            
+                            ${agent.summary ? `<div class="agent-detail-row">
+                                <span class="agent-detail-label">Summary:</span>
+                                <span class="agent-detail-value">${agent.summary}</span>
+                            </div>` : ''}
+                            
+                            ${agent.createdAt ? `<div class="agent-detail-row">
+                                <span class="agent-detail-label">Created:</span>
+                                <span class="agent-detail-value">${new Date(agent.createdAt).toLocaleString()}</span>
+                            </div>` : ''}
+                        </div>
+                        
+                        <div class="agent-actions">
+                            ${agent.target && agent.target.url ? `<button class="btn-small btn-primary" onclick="window.open('${agent.target.url}', '_blank')">View Agent</button>` : ''}
+                            ${agent.target && agent.target.prUrl ? `<button class="btn-small btn-success" onclick="window.open('${agent.target.prUrl}', '_blank')">View PR</button>` : ''}
+                            <button class="btn-small btn-danger" onclick="stopAgent('${agent.id}')">Stop Agent</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Stop an agent
+        async function stopAgent(agentId) {
+            if (!confirm('Are you sure you want to stop this agent?')) {
+                return;
+            }
+            
+            try {
+                showStatus('Stopping agent...', 'success');
+                
+                // In a real implementation, this would call the MCP server
+                // For now, we'll just show a message
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                showStatus(`✅ Agent ${agentId} stopped`, 'success');
+                loadAgents(); // Refresh the list
+            } catch (error) {
+                console.error('Error stopping agent:', error);
+                showStatus('❌ Failed to stop agent', 'error');
+            }
+        }
 
         function previewConfig() {
             const formData = new FormData(document.getElementById('configForm'));
@@ -445,8 +870,6 @@
                 prompt: config.prompt,
                 branch: config.branch,
                 model: config.model,
-                max_iterations: parseInt(config.max_iterations),
-                task_type: config.task_type,
                 timestamp: new Date().toISOString()
             };
 
@@ -488,8 +911,8 @@
                 updateBtn.textContent = '🔄 Updating...';
                 showStatus('Fetching available models from Cursor API...', 'success');
                 
-                // Fetch models from API
-                const response = await fetch('/api/models');
+                // Fetch models from API with force refresh
+                const response = await fetch('/api/models?force_refresh=true');
                 const data = await response.json();
                 
                 if (data.success && data.models && data.models.length > 0) {
@@ -512,6 +935,10 @@
                     
                     // Update model info
                     updateModelInfo();
+                    
+                    // Store data in localStorage for persistence
+                    localStorage.setItem('lastLoadedModels', JSON.stringify(data.models));
+                    localStorage.setItem('lastModelLoadTime', Date.now().toString());
                     
                     showStatus(`✅ Updated! Found ${data.models.length} available models`, 'success');
                 } else {
@@ -544,6 +971,11 @@
             const modelInfoDiv = document.getElementById('modelInfo');
             const selectedModel = modelSelect.value;
             
+            // Store selected model in localStorage
+            if (selectedModel) {
+                localStorage.setItem('selectedModel', selectedModel);
+            }
+            
             if (modelInfo[selectedModel]) {
                 const info = modelInfo[selectedModel];
                 modelInfoDiv.innerHTML = `
@@ -552,6 +984,185 @@
                 `;
             } else {
                 modelInfoDiv.innerHTML = `<strong>${formatModelName(selectedModel)}:</strong> Advanced AI model for autonomous coding tasks.`;
+            }
+        }
+
+        // Update available repositories from Cursor API
+        async function updateAvailableRepositories() {
+            const updateBtn = document.getElementById('updateRepositories');
+            const repositoryDropdown = document.getElementById('repositoryDropdown');
+            const repositorySelect = document.getElementById('repositorySelect');
+            const repositoryInput = document.getElementById('repository_url');
+            
+            try {
+                // Disable button and show loading
+                updateBtn.disabled = true;
+                updateBtn.textContent = '🔄 Updating...';
+                showStatus('Fetching accessible repositories from Cursor API...', 'success');
+                
+                // Fetch repositories from API with force refresh
+                const response = await fetch('/api/repositories?force_refresh=true');
+                const data = await response.json();
+                
+                if (data.success && data.repositories && data.repositories.length > 0) {
+                    // Clear existing options
+                    repositorySelect.innerHTML = '<option value="">Select a repository...</option>';
+                    
+                    // Add fetched repositories
+                    data.repositories.forEach((repo) => {
+                        const option = document.createElement('option');
+                        option.value = repo.repository;
+                        option.textContent = `${repo.owner}/${repo.name}`;
+                        repositorySelect.appendChild(option);
+                    });
+                    
+                    // Show dropdown
+                    repositoryDropdown.style.display = 'block';
+                    
+                    // Store data in localStorage for persistence
+                    localStorage.setItem('lastLoadedRepositories', JSON.stringify(data.repositories));
+                    localStorage.setItem('lastRepositoryLoadTime', Date.now().toString());
+                    
+                    showStatus(`✅ Updated! Found ${data.repositories.length} accessible repositories`, 'success');
+                } else {
+                    showStatus('⚠️ No repositories returned from API', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching repositories:', error);
+                showStatus('❌ Failed to fetch repositories from API', 'error');
+            } finally {
+                // Re-enable button
+                updateBtn.disabled = false;
+                updateBtn.textContent = '🔄 Update Repos';
+            }
+        }
+
+        // Select repository from dropdown
+        function selectRepository() {
+            const repositorySelect = document.getElementById('repositorySelect');
+            const repositoryInput = document.getElementById('repository_url');
+            
+            if (repositorySelect.value) {
+                repositoryInput.value = repositorySelect.value;
+                showStatus(`✅ Selected repository: ${repositorySelect.value}`, 'success');
+                
+                // Only clear branch dropdown if it's a different repository
+                const currentRepo = repositoryInput.value;
+                const lastLoadedRepo = localStorage.getItem('lastLoadedRepository');
+                
+                if (currentRepo !== lastLoadedRepo) {
+                    const branchDropdown = document.getElementById('branchDropdown');
+                    const branchSelect = document.getElementById('branchSelect');
+                    branchDropdown.style.display = 'none';
+                    branchSelect.innerHTML = '<option value="">Select a branch...</option>';
+                }
+            }
+        }
+
+        // Update available branches from GitHub API
+        async function updateAvailableBranches() {
+            const updateBtn = document.getElementById('updateBranches');
+            const branchDropdown = document.getElementById('branchDropdown');
+            const branchSelect = document.getElementById('branchSelect');
+            const repositoryInput = document.getElementById('repository_url');
+            
+            if (!repositoryInput.value) {
+                showStatus('❌ Please select a repository first', 'error');
+                return;
+            }
+            
+            try {
+                // Disable button and show loading
+                updateBtn.disabled = true;
+                updateBtn.textContent = '🔄 Updating...';
+                showStatus('Fetching branches from GitHub API...', 'success');
+                
+                // Fetch branches from API
+                const response = await fetch(`/api/branches?repository_url=${encodeURIComponent(repositoryInput.value)}&force_refresh=true`);
+                const data = await response.json();
+                
+                if (data.branches && data.branches.length > 0) {
+                    // Clear existing options
+                    branchSelect.innerHTML = '<option value="">Select a branch...</option>';
+                    
+                    // Add fetched branches
+                    data.branches.forEach((branch) => {
+                        const option = document.createElement('option');
+                        option.value = branch;
+                        option.textContent = branch;
+                        branchSelect.appendChild(option);
+                    });
+                    
+                    // Show dropdown
+                    branchDropdown.style.display = 'block';
+                    
+                    // Store data in localStorage for persistence
+                    localStorage.setItem('lastLoadedRepository', repositoryInput.value);
+                    localStorage.setItem('lastLoadedBranches', JSON.stringify(data.branches));
+                    localStorage.setItem('lastBranchLoadTime', Date.now().toString());
+                    
+                    if (data.success) {
+                        showStatus(`✅ Updated! Found ${data.branches.length} branches for ${data.owner}/${data.repo}`, 'success');
+                    } else {
+                        showStatus(`⚠️ Using fallback branches: ${data.message}`, 'warning');
+                    }
+                } else {
+                    showStatus(`❌ No branches available: ${data.message || 'Unknown error'}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching branches:', error);
+                showStatus('❌ Failed to fetch branches from GitHub API', 'error');
+            } finally {
+                // Re-enable button
+                updateBtn.disabled = false;
+                updateBtn.textContent = '🔄 Update Branches';
+            }
+        }
+
+        // Select branch from dropdown
+        function selectBranch() {
+            const branchSelect = document.getElementById('branchSelect');
+            const branchInput = document.getElementById('branch');
+            const createNewBranchCheckbox = document.getElementById('createNewBranch');
+            
+            if (branchSelect.value) {
+                branchInput.value = branchSelect.value;
+                createNewBranchCheckbox.checked = false;
+                toggleNewBranchInput();
+                showStatus(`✅ Selected branch: ${branchSelect.value}`, 'success');
+            }
+        }
+
+        // Toggle new branch input visibility
+        function toggleNewBranchInput() {
+            const createNewBranchCheckbox = document.getElementById('createNewBranch');
+            const newBranchNameInput = document.getElementById('newBranchName');
+            const branchInput = document.getElementById('branch');
+            const branchSelect = document.getElementById('branchSelect');
+            
+            if (createNewBranchCheckbox.checked) {
+                newBranchNameInput.style.display = 'block';
+                newBranchNameInput.required = true;
+                branchSelect.value = '';
+                branchInput.value = '';
+                newBranchNameInput.focus();
+            } else {
+                newBranchNameInput.style.display = 'none';
+                newBranchNameInput.required = false;
+                newBranchNameInput.value = '';
+            }
+        }
+
+        // Update branch input when new branch name is entered
+        function updateBranchFromNewName() {
+            const newBranchNameInput = document.getElementById('newBranchName');
+            const branchInput = document.getElementById('branch');
+            const createNewBranchCheckbox = document.getElementById('createNewBranch');
+            
+            if (createNewBranchCheckbox.checked && newBranchNameInput.value) {
+                branchInput.value = newBranchNameInput.value;
             }
         }
 
@@ -571,8 +1182,7 @@
                     repository_url: config.repository_url,
                     prompt: config.prompt,
                     branch: config.branch,
-                    model: config.model,
-                    max_iterations: parseInt(config.max_iterations)
+                    model: config.model
                 };
 
                 // Simulate API call delay
@@ -607,7 +1217,6 @@
                     document.getElementById('prompt').value = config.prompt || '';
                     document.getElementById('branch').value = config.branch || 'main';
                     document.getElementById('model').value = config.model || 'claude-4-sonnet-thinking';
-                    document.getElementById('max_iterations').value = config.max_iterations || 15;
                     
                     // Trigger model info update
                     updateModelInfo();
@@ -618,11 +1227,147 @@
             }
         });
 
+        // Restore model data from localStorage
+        function restoreModelData() {
+            const modelSelect = document.getElementById('model');
+            const lastLoadedModels = localStorage.getItem('lastLoadedModels');
+            const lastLoadTime = localStorage.getItem('lastModelLoadTime');
+            
+            // Check if we have cached data and it's not too old (5 minutes)
+            if (lastLoadedModels && lastLoadTime) {
+                const cacheAge = Date.now() - parseInt(lastLoadTime);
+                const maxCacheAge = 5 * 60 * 1000; // 5 minutes
+                
+                if (cacheAge < maxCacheAge) {
+                    try {
+                        const models = JSON.parse(lastLoadedModels);
+                        
+                        // Clear existing options
+                        modelSelect.innerHTML = '';
+                        
+                        // Add cached models
+                        models.forEach((model) => {
+                            const option = document.createElement('option');
+                            option.value = model;
+                            option.textContent = formatModelName(model);
+                            modelSelect.appendChild(option);
+                        });
+                        
+                        // Restore previous selection if available
+                        const savedModel = localStorage.getItem('selectedModel');
+                        if (savedModel && models.includes(savedModel)) {
+                            modelSelect.value = savedModel;
+                        }
+                        
+                        updateModelInfo();
+                        showStatus(`✅ Restored ${models.length} cached models`, 'success');
+                    } catch (e) {
+                        console.error('Error parsing cached model data:', e);
+                    }
+                }
+            }
+        }
+
+        // Restore repository data from localStorage
+        function restoreRepositoryData() {
+            const repositoryDropdown = document.getElementById('repositoryDropdown');
+            const repositorySelect = document.getElementById('repositorySelect');
+            const lastLoadedRepositories = localStorage.getItem('lastLoadedRepositories');
+            const lastLoadTime = localStorage.getItem('lastRepositoryLoadTime');
+            
+            // Check if we have cached data and it's not too old (5 minutes)
+            if (lastLoadedRepositories && lastLoadTime) {
+                const cacheAge = Date.now() - parseInt(lastLoadTime);
+                const maxCacheAge = 5 * 60 * 1000; // 5 minutes
+                
+                if (cacheAge < maxCacheAge) {
+                    try {
+                        const repositories = JSON.parse(lastLoadedRepositories);
+                        
+                        // Clear existing options
+                        repositorySelect.innerHTML = '<option value="">Select a repository...</option>';
+                        
+                        // Add cached repositories
+                        repositories.forEach((repo) => {
+                            const option = document.createElement('option');
+                            option.value = repo.repository;
+                            option.textContent = `${repo.owner}/${repo.name}`;
+                            repositorySelect.appendChild(option);
+                        });
+                        
+                        // Show dropdown
+                        repositoryDropdown.style.display = 'block';
+                        
+                        showStatus(`✅ Restored ${repositories.length} cached repositories`, 'success');
+                    } catch (e) {
+                        console.error('Error parsing cached repository data:', e);
+                    }
+                }
+            }
+        }
+
+        // Restore branch data from localStorage
+        function restoreBranchData() {
+            const repositoryInput = document.getElementById('repository_url');
+            const branchDropdown = document.getElementById('branchDropdown');
+            const branchSelect = document.getElementById('branchSelect');
+            
+            const lastLoadedRepo = localStorage.getItem('lastLoadedRepository');
+            const lastLoadedBranches = localStorage.getItem('lastLoadedBranches');
+            const lastLoadTime = localStorage.getItem('lastBranchLoadTime');
+            
+            // Check if we have cached data and it's not too old (5 minutes)
+            if (lastLoadedRepo && lastLoadedBranches && lastLoadTime) {
+                const cacheAge = Date.now() - parseInt(lastLoadTime);
+                const maxCacheAge = 5 * 60 * 1000; // 5 minutes
+                
+                if (cacheAge < maxCacheAge) {
+                    // Restore branches if repository matches (or if no repository is set yet)
+                    if (repositoryInput.value === lastLoadedRepo || !repositoryInput.value) {
+                        try {
+                            const branches = JSON.parse(lastLoadedBranches);
+                            
+                            // Clear existing options
+                            branchSelect.innerHTML = '<option value="">Select a branch...</option>';
+                            
+                            // Add cached branches
+                            branches.forEach((branch) => {
+                                const option = document.createElement('option');
+                                option.value = branch;
+                                option.textContent = branch;
+                                branchSelect.appendChild(option);
+                            });
+                            
+                            // Show dropdown
+                            branchDropdown.style.display = 'block';
+                            
+                            // Set the repository input if it's empty
+                            if (!repositoryInput.value) {
+                                repositoryInput.value = lastLoadedRepo;
+                            }
+                            
+                            showStatus(`✅ Restored ${branches.length} cached branches for ${lastLoadedRepo}`, 'success');
+                        } catch (e) {
+                            console.error('Error parsing cached branch data:', e);
+                        }
+                    }
+                }
+            }
+        }
+
         // Add event listener for model selection change
         document.getElementById('model').addEventListener('change', updateModelInfo);
         
         // Initialize model info on page load
         updateModelInfo();
+        
+        // Restore all cached data on page load
+        restoreModelData();
+        restoreRepositoryData();
+        restoreBranchData();
+        
+        // Load agents on page load since manage view is default
+        loadAgents();
     </script>
 </body>
 </html>

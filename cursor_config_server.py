@@ -242,7 +242,7 @@ async def stop_agent(agent_id: str):
         }
 
 @app.get("/api/models")
-async def list_available_models():
+async def list_available_models(force_refresh: bool = False):
     """Get list of available AI models"""
     try:
         server = get_mcp_server()
@@ -250,7 +250,7 @@ async def list_available_models():
         if not hasattr(server, '_initialized') or not server._initialized:
             await server.initialize()
         
-        result = await server._list_available_models()
+        result = await server._list_available_models(force_refresh=force_refresh)
         return result
         
     except Exception as e:
@@ -265,7 +265,7 @@ async def list_available_models():
         }
 
 @app.get("/api/repositories")
-async def list_repositories():
+async def list_repositories(force_refresh: bool = False):
     """Get list of accessible repositories"""
     try:
         server = get_mcp_server()
@@ -273,7 +273,7 @@ async def list_repositories():
         if not hasattr(server, '_initialized') or not server._initialized:
             await server.initialize()
         
-        result = await server._list_repositories()
+        result = await server._list_repositories(force_refresh=force_refresh)
         return result
         
     except Exception as e:
@@ -281,6 +281,49 @@ async def list_repositories():
             "success": False,
             "error": str(e),
             "repositories": []
+        }
+
+@app.get("/api/branches")
+async def list_repository_branches(repository_url: str, force_refresh: bool = False):
+    """Get list of branches for a specific repository"""
+    try:
+        server = get_mcp_server()
+        
+        if not hasattr(server, '_initialized') or not server._initialized:
+            await server.initialize()
+        
+        result = await server._list_repository_branches(repository_url, force_refresh=force_refresh)
+        return result
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "branches": ["main", "master", "develop"]
+        }
+
+@app.get("/api/agents")
+async def list_agents(limit: int = 20, cursor: str = None):
+    """Get list of existing background agents"""
+    try:
+        server = get_mcp_server()
+        
+        if not hasattr(server, '_initialized') or not server._initialized:
+            await server.initialize()
+        
+        # Prepare arguments for the MCP method
+        args = {"limit": limit}
+        if cursor:
+            args["cursor"] = cursor
+            
+        result = await server._list_background_agents(args)
+        return result
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "agents": []
         }
 
 async def save_config(config_data: Dict[str, Any]):
