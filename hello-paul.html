@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Paul</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .wave {
+            display: inline-block;
+            animation: wave 2s ease-in-out infinite;
+            transform-origin: 70% 70%;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #764ba2;
+            margin-top: 1rem;
+            font-weight: 300;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes wave {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            10%, 30% {
+                transform: rotate(14deg);
+            }
+            20%, 40% {
+                transform: rotate(-8deg);
+            }
+            50% {
+                transform: rotate(14deg);
+            }
+            60% {
+                transform: rotate(0deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            .container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello Paul! <span class="wave">??</span></h1>
+        <p class="subtitle">Welcome to your personalized page</p>
+    </div>
+</body>
+</html>
