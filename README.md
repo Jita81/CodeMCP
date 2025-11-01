@@ -223,6 +223,73 @@ fetch('http://localhost:8080/api/create-agent', {
 .then(data => console.log('Agent created:', data.agent_id));
 ```
 
+## 🧪 Testing
+
+The project includes a test script to verify the MCP server functionality and API connectivity.
+
+### Running Tests
+
+```bash
+# Ensure your API key is set
+export CURSOR_API_KEY="your_cursor_api_key_here"
+
+# Run the test script
+python3 test_cursor_mcp.py
+```
+
+### What Gets Tested
+
+The test script validates:
+
+- **✅ Server Initialization**: Verifies the MCP server starts correctly
+- **✅ API Connection**: Tests connectivity to the Cursor API
+- **✅ Configuration**: Validates API key and configuration settings
+- **📊 Usage Data**: Retrieves and displays your API usage information
+
+### Expected Output
+
+Successful test run:
+```
+🧪 Testing Cursor Agent MCP Server...
+✅ Server initialization successful
+✅ API connection successful
+📊 Usage data: {
+  "success": true,
+  ...
+}
+```
+
+Failed test run:
+```
+❌ CURSOR_API_KEY not set
+```
+or
+```
+❌ Test failed: [error message]
+```
+
+### Prerequisites for Testing
+
+- Python 3.8+
+- Valid `CURSOR_API_KEY` set in environment
+- Dependencies installed (`pip install -r cursor_mcp_requirements.txt`)
+- Internet connectivity to reach Cursor API
+
+### Using with dotenv
+
+The test script supports `.env` files for easier configuration:
+
+```bash
+# Create .env file
+cp env.example .env
+
+# Edit with your API key
+echo "CURSOR_API_KEY=your_api_key_here" > .env
+
+# Run tests (will auto-load .env)
+python3 test_cursor_mcp.py
+```
+
 ## 🔧 Advanced Configuration
 
 ### Custom Webhooks
